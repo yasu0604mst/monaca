@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src * data:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
+    <script src="components/loader.js"></script>
+    <link rel="stylesheet" href="components/loader.css">
+    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        body{
+            background-color:#BBDEFB;
+    		padding-top:20px;
+    		font-family:Verdana,sans-serif;
+            text-align:center;
+    	}
+        #mycanvas{
+            margin: 10px auto;
+        }
+    </style>
+    
+    <script>
+    $(function(){
+    	var application_key="4f2e7aa14e5ce99cd5d3afe383cf5a7f619703b9d585c6649364a0e79a706d37";
+		var client_key = "1676a7a7c424c496b598be5da0ece323ae11adbf8f6ba2202f36c44b09bbb05e";
+		var ncmb = new NCMB(application_key, client_key);
+    	var user = ncmb.User.getCurrentUser();
+        
+        if (user === null) {
+            //alert("Username1:"+ user.userName);
+    		location.href = "./index.html";
+		} else {
+            //alert("Username2:"+ user.userName);
+            $("#username").text("UserName:" + user.userName);
+        }
+        
+        var canvas = document.getElementById("mycanvas");
+		var ctx = canvas.getContext("2d");
+		
+    	//変数
+		var centerX = canvas.width  / 2;
+		var centerY = canvas.height / 2;
+		var r = 30;
+		var timerId;
+		var isPlaying = false;
+		var target;
+		var score;
+    	var Rank = ncmb.DataStore("rank");
+		
+    	//Start screen
+		ctx.font = "normal 28px Verdana";
+		ctx.textAlign = "center";
+		ctx.fillStyle = "#FFFFFF";
+		ctx.fillText("Stop at Target!",centerX, centerY);
+            
+        $("#logout").on("click",function() {
+            ncmb.User.logout()
+            .then(function() {
+                //alert("logOut Ok");
+            	location.href = "./index.html";	
+    		})
+            .catch(function(){
+                alert("logOut Error");
+            });
+            return false;
+    	});
+        
+        $("#mycanvas").on("click",function(){ 
+            //alert("Test2");
+            target = Math.floor(Math.random() * 121) + 80;
+			drawCircle();
+        });
+        
+        function drawCircle(){
+            //alert("drawCircle");
+            
+			ctx.fillStyle = "#BBDEFB";
+			ctx.fillRect(0,0,canvas.width,canvas.height);
+			
+			//円を描く
+			ctx.fillStyle ="#1976D2";
+			//ctx.geginPath();
+			ctx.arc(centerX,centerY,r,0, Math.PI * 2, false);
+			ctx.fill();
+			//ターゲットの描画
+			ctx.fillStyle = "#FFFFFF";
+			ctx.fillText("Target:" + target, centerX, centerY -35);
+		}   
+	});
+
+    </script>
+</head>
+<body>
+<span id="username"></span>
+<input type="button" id="logout" value="Logout" >
+<h1>Page1</h1>
+
+<canvas id="mycanvas"></canvas>
+</body>
+</html>
